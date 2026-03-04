@@ -30,7 +30,7 @@
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/smartcut-studio.git
+   git clone https://github.com/ambrosiusamit/smartcut-studio.git
    cd smartcut-studio
    ```
 
@@ -163,6 +163,10 @@ Then check the transcription checkbox in the UI or set `transcribe=true` in the 
 ## 📄 License
 
 MIT License - see LICENSE file for details.
+
+## 👤 Author
+
+Amit Kumar
 
 ## 🙏 Acknowledgments
 

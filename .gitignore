@@ -66,3 +66,8 @@ storage/*
 *.tmp
 temp_audiofile*
 
+# GitHub CLI installation files
+gh.msi
+gh.zip
+gh/
+

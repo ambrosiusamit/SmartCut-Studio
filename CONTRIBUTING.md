@@ -33,7 +33,7 @@ Thank you for your interest in contributing to SmartCut Studio!
 
 ```bash
 # Clone your fork
-git clone https://github.com/yourusername/smartcut-studio.git
+git clone https://github.com/ambrosiusamit/smartcut-studio.git
 cd smartcut-studio
 
 # Create virtual environment
@@ -64,4 +64,8 @@ pytest
 ## License
 
 By contributing, you agree that your contributions will be licensed under the MIT License.
+
+## 👤 Author
+
+Amit Kumar
 
