@@ -1,0 +1,10 @@
+numpy
+fastapi
+opencv-python
+scenedetect
+moviepy
+uvicorn
+python-multipart
+# Optional for transcription
+# faster-whisper
+# openai-whisper
