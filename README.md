@@ -1,167 +1,291 @@
 # SmartCut Studio
 
-AI-assisted video editing application with automatic scene detection, beat-synced transitions and optional transcription. Lightweight FastAPI backend paired with a simple HTML/JS frontend.
+<div align="center">
+
+[![Python](https://img.shields.io/badge/Python-3.8%2B-blue?style=flat-square&logo=python&logoColor=white)](https://python.org)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.100%2B-green?style=flat-square&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow?style=flat-square)](LICENSE)
+[![GitHub](https://img.shields.io/badge/GitHub-ambrosiusamit-black?style=flat-square&logo=github)](https://github.com/ambrosiusamit)
+
+**Intelligent Video Editing Automation**
+
+Turn hours of manual editing into minutes with AI-powered scene detection, beat alignment, and auto-transcription.
+
+[Quick Start](#-quick-start) • [Features](#-features) • [API](#-api) • [Tech Stack](#-tech-stack) • [Contributing](#-contributing)
+
+</div>
 
 ---
 
-##  Project Overview
+## 🎯 About
 
-SmartCut Studio lets users upload videos, automatically analyzes scenes and audio beats, and renders edited clips with optional subtitles. The backend exposes a minimal REST API (`/analyze` and `/render`), while the frontend demonstrates usage via a static page. Designed as a student portfolio project, it showcases fast prototyping, multimedia processing, and web APIs.
+SmartCut Studio automates the boring parts of video editing. Upload a video, and the AI:
+- **Detects scene cuts** using content analysis
+- **Finds beat points** in audio for rhythm-synced edits  
+- **Transcribes speech** and generates subtitles
+- **Renders your edit** with chosen transitions
 
----
-
-##  Features
-
-- Automatic scene detection using **PySceneDetect**
-- Beat-synced transitions for music videos
-- Whisper transcription with SRT subtitle output
-- Multiple transition types (cut, crossfade)
-- REST API compatible with any client
-- Simple browser-based demo UI
+Built as a **student portfolio project** to demonstrate full-stack development: multimedia processing, REST APIs, and seamless backend-frontend integration.
 
 ---
 
-##  Architecture
+## ✨ Features
 
+| Feature | Description |
+|---------|-------------|
+| 🎬 **Scene Detection** | Automatically identifies scene cuts and transitions |
+| 🎵 **Beat-Synced Editing** | Align video cuts to music beats for dynamic montages |
+| 📝 **Auto-Transcription** | Whisper-powered speech-to-text with SRT subtitles |
+| ✂️ **Flexible Transitions** | Frame-perfect cuts or smooth crossfades |
+| 🌐 **REST API** | Simple, clean endpoints for programmatic use |
+| 🎨 **Demo UI** | Zero-config browser interface included |
+
+---
+
+## 🚀 Quick Start
+
+### Prerequisites
+- **Python 3.8+**
+- **FFmpeg** (system dependency)
+- **~5 minutes** of your time
+
+### Setup (5 Steps)
+
+```bash
+# 1️⃣ Clone
+git clone https://github.com/ambrosiusamit/SmartCut-Studio.git
+cd SmartCut-Studio
+
+# 2️⃣ Virtual environment
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+# 3️⃣ Dependencies
+pip install -r requirements.txt
+
+# 4️⃣ Install FFmpeg
+# Windows: winget install ffmpeg
+# macOS:   brew install ffmpeg
+# Linux:   sudo apt install ffmpeg
+
+# 5️⃣ Run
+cd smartcut-backend && python app.py
+```
+
+**That's it!** Open `http://localhost:5200` in your browser.
+
+---
+
+## 📡 API Reference
+
+### Upload & Analyze
+```bash
+curl -F "file=@video.mp4" \
+     -F "transcribe=true" \
+     http://localhost:5200/analyze
+```
+
+**Response:**
+```json
+{
+  "video_id": "a590a3f3",
+  "scenes": [
+    {"index": 0, "start": 0.0, "end": 5.2, "duration": 5.2},
+    {"index": 1, "start": 5.2, "end": 12.8, "duration": 7.6}
+  ],
+  "beats": [0.0, 2.5, 5.0, 7.5, 10.0, 12.5],
+  "transcript": {
+    "srt_url": "/store/a590a3f3.srt",
+    "segments": [{"text": "Hello world...", "start": 0.0, "end": 2.5}]
+  }
+}
+```
+
+### Render Edited Video
+```bash
+curl -X POST http://localhost:5200/render \
+  -H "Content-Type: application/json" \
+  -d '{
+    "video_id": "a590a3f3",
+    "selections": [0, 1],
+    "transition": "crossfade",
+    "transition_sec": 1.0,
+    "subtitles": true
+  }'
+```
+
+**Response:**
+```json
+{
+  "download_url": "/store/a590a3f3_edit.mp4",
+  "duration": 13.0,
+  "status": "success"
+}
+```
+
+> 💡 See inline comments in `smartcut-backend/app.py` for implementation details.
+
+---
+
+## 🏗️ Architecture
+
+```
+┌─────────────────────────────────────────┐
+│         Frontend (Browser)              │
+│  HTML/CSS/JS - Simple upload/download   │
+└──────────────┬──────────────────────────┘
+               │ fetch() calls
+               ▼
+┌─────────────────────────────────────────┐
+│      Backend (FastAPI @ :5200)          │
+│  ┌──────────────────────────────────┐   │
+│  │ POST /analyze → process video    │   │
+│  │ POST /render → generate output   │   │
+│  └──────────────────────────────────┘   │
+└──────────────┬──────────────────────────┘
+               │
+      ┌────────┴────────┬───────────┐
+      ▼                 ▼           ▼
+  ┌────────┐      ┌─────────┐  ┌────────┐
+  │ Scene  │      │  Beat   │  │Whisper │
+  │Detect  │      │Analysis │  │  ASR   │
+  └────────┘      └─────────┘  └────────┘
+      │                 │           │
+      └────────────┬────┴───────────┘
+                   ▼
+          ┌─────────────────────┐
+          │  MoviePy Rendering  │
+          │  (MP4 output)       │
+          └─────────────────────┘
+```
+
+### Directory Structure
 ```
 SmartCut-Studio/
- smartcut-backend/   # FastAPI application + processing logic
-    app.py
-    store/          # outputs (ignored by git)
-
- smartcut-frontend/  # Static HTML/CSS/JS user interface
-    index.html
-    script.js
-    style.css
-
- requirements.txt
- README.md           # this file
- LICENSE
+├── smartcut-backend/
+│   ├── app.py              # ~600 lines | All logic here
+│   └── store/              # Output videos (gitignored)
+├── smartcut-frontend/
+│   ├── index.html          # UI markup
+│   ├── script.js           # API integration
+│   └── style.css           # Styling
+├── requirements.txt        # Dependencies
+├── README.md              # This file
+└── LICENSE                # MIT
 ```
 
-Backend responsibilities:
-- Handle uploads and store incoming videos
-- Detect scenes, beats and transcribe audio
-- Render final video with selected scenes and transitions
-- Serve resulting files from `/store`
+---
 
-Frontend responsibilities:
-- Provide a minimal interface for upload, selection and download
-- Interact with backend API via `fetch()` calls
+## 🛠️ Tech Stack
+
+| Layer | Technology | Purpose |
+|-------|-----------|---------|
+| **Backend** | FastAPI, Python 3.8+ | REST API & video processing |
+| **Video** | OpenCV, MoviePy, FFmpeg | Frame extraction & composition |
+| **Analysis** | PySceneDetect | Scene boundary detection |
+| **Audio** | Librosa, Whisper | Beat detection & transcription |
+| **Frontend** | HTML5, CSS3, Vanilla JS | User interface (no frameworks) |
 
 ---
 
-##  Installation
+## 📚 Usage Examples
 
-1. **Clone repository**
-   ```bash
-   git clone https://github.com/ambrosiusamit/SmartCut-Studio.git
-   cd SmartCut-Studio
-   ```
+### Python Client
+```python
+import requests
 
-2. **Create Python virtual environment**
-   ```bash
-   python -m venv venv
-   source venv/bin/activate   # Windows: venv\Scripts\activate
-   ```
+# Upload and analyze
+with open('video.mp4', 'rb') as f:
+    resp = requests.post(
+        'http://localhost:5200/analyze',
+        files={'file': f},
+        data={'transcribe': 'true', 'language': 'en'}
+    )
+    video_id = resp.json()['video_id']
+    print(f"Found {len(resp.json()['scenes'])} scenes")
 
-3. **Install dependencies**
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-4. **Install FFmpeg** (required for video processing):
-   - Windows: `winget install ffmpeg`
-   - macOS: `brew install ffmpeg`
-   - Linux: `sudo apt install ffmpeg`
-
-5. **Run backend server**
-   ```bash
-   cd smartcut-backend
-   python app.py
-   ```
-
-6. **Open frontend**
-   - Open `smartcut-frontend/index.html` directly in browser
-   - or visit `http://localhost:5200/docs` for API docs
-
----
-
-##  API Endpoints
-
-### `POST /analyze`
-Uploads a video and returns analysis results.
-- Parameters: `file` (video), `transcribe` (`true`/`false`), `language`
-- Response includes `video_id`, `scenes`, `beats`, `transcript` URLs.
-
-### `POST /render`
-Creates edited video from selected scenes.
-- JSON body: `video_id`, `selections`, `transition`, etc.
-- Returns `download_url`, `duration`, and status.
-
-> The API is intentionally simple; refer to inline comments in `app.py` for details.
-
----
-
-##  Future Improvements
-
-- User authentication & per-user storage
-- Background job queue with progress updates
-- Docker support and CI/CD pipeline
-- Unit tests, linting and continuous integration
-- More advanced editing features (filters, effects)
-- Support for cloud storage (S3/GCS)
-- Improved frontend with React/Vue or similar
-
----
-
-##  Recommended Folder Structure
-
-```
-SmartCut-Studio/
- smartcut-backend/
-    app.py
-    requirements.txt   # optionally keep here
-    store/             # gitignored
- smartcut-frontend/
-    index.html
-    script.js
-    style.css
- README.md
- LICENSE
- .gitignore
+# Render edit
+render = requests.post(
+    'http://localhost:5200/render',
+    json={
+        'video_id': video_id,
+        'selections': [0, 1, 2],
+        'transition': 'crossfade',
+        'transition_sec': 0.5
+    }
+)
+print(f"Download: {render.json()['download_url']}")
 ```
 
-Keep all project logic in the two primary directories; move configuration (requirements.txt) into backend if desired.
+### JavaScript
+```javascript
+const formData = new FormData();
+formData.append('file', videoFile);
+formData.append('transcribe', 'true');
+
+const result = await fetch('http://localhost:5200/analyze', {
+    method: 'POST',
+    body: formData
+}).then(r => r.json());
+
+console.log(`${result.scenes.length} scenes detected`);
+```
 
 ---
 
-##  Files to Delete
+## 🚧 Roadmap
 
-To simplify the repository for portfolio use, you can safely remove the following:
-
-- `API.md`  
-- `ARCHITECTURE.md`  
-- `DEVELOPMENT.md`  
-- `INSTALLATION.md`  
-- `QUICK_START.md`  
-- `PUSH.md`  
-
-Optionally, merge any relevant notes from `CONTRIBUTING.md` into the README and then delete `CONTRIBUTING.md` as well.
-
-Maintenance files like `.gitignore`, `requirements.txt`, and `LICENSE` should remain.
+- [ ] User authentication & per-user storage
+- [ ] Background job queue for long videos
+- [ ] WebSocket progress updates
+- [ ] Docker & cloud deployment
+- [ ] Additional filters (blur, color, effects)
+- [ ] React/Vue frontend upgrade
+- [ ] Comprehensive test suite
+- [ ] Cloud storage integration (S3/GCS)
 
 ---
 
-##  Professionalization Suggestions
+## 🤝 Contributing
 
-- Add a simple README with badges (build status, license).
-- Include a `requirements.txt` and ensure its kept minimal.
-- Add a `gitignore` ignoring virtualenvs and output files.
-- Write concise inline comments in `app.py` for readability.
-- Add a small test video or instructions in README for demo.
-- Use semantic versioning tags when releasing.
-- Display screenshots or a GIF in README showing the UI.
-- Optionally include a Dockerfile for easy deployment.
+Pull requests welcome! To contribute:
 
-These changes keep the repo clean, approachable for recruiters, and showcase your ability to structure a project clearly.
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/my-feature`)
+3. Commit changes (`git commit -m "add: cool feature"`)
+4. Push to branch (`git push origin feature/my-feature`)
+5. Open a Pull Request
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License — see [LICENSE](LICENSE) for details.
+
+---
+
+## 👤 Author
+
+**Amit Kumar**
+- GitHub: [@ambrosiusamit](https://github.com/ambrosiusamit)
+- Portfolio: Video editing automation enthusiast
+
+---
+
+## 🙏 Acknowledgments
+
+- [FastAPI](https://fastapi.tiangolo.com/) — Modern Python web framework
+- [PySceneDetect](https://github.com/Breakthrough/PySceneDetect) — Scene detection
+- [MoviePy](https://zulko.github.io/moviepy/) — Video composition
+- [Whisper](https://github.com/openai/whisper) — Speech recognition
+- [OpenCV](https://opencv.org/) — Computer vision
+
+---
+
+<div align="center">
+
+**Built with ❤️ for the portfolio**
+
+[⬆ Back to top](#smartcut-studio)
+
+</div>
