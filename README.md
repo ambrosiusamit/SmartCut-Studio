@@ -133,35 +133,3 @@ SmartCut-Studio/
 ```
 
 Keep all project logic in the two primary directories; move configuration (requirements.txt) into backend if desired.
-
----
-
-##  Files to Delete
-
-To simplify the repository for portfolio use, you can safely remove the following:
-
-- `API.md`  
-- `ARCHITECTURE.md`  
-- `DEVELOPMENT.md`  
-- `INSTALLATION.md`  
-- `QUICK_START.md`  
-- `PUSH.md`  
-
-Optionally, merge any relevant notes from `CONTRIBUTING.md` into the README and then delete `CONTRIBUTING.md` as well.
-
-Maintenance files like `.gitignore`, `requirements.txt`, and `LICENSE` should remain.
-
----
-
-##  Professionalization Suggestions
-
-- Add a simple README with badges (build status, license).
-- Include a `requirements.txt` and ensure its kept minimal.
-- Add a `gitignore` ignoring virtualenvs and output files.
-- Write concise inline comments in `app.py` for readability.
-- Add a small test video or instructions in README for demo.
-- Use semantic versioning tags when releasing.
-- Display screenshots or a GIF in README showing the UI.
-- Optionally include a Dockerfile for easy deployment.
-
-These changes keep the repo clean, approachable for recruiters, and showcase your ability to structure a project clearly.
