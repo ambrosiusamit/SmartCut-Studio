@@ -268,7 +268,7 @@ This project is licensed under the MIT License — see [LICENSE](LICENSE) for de
 
 **Amit Kumar**
 - GitHub: [@ambrosiusamit](https://github.com/ambrosiusamit)
-- Portfolio: Video editing automation enthusiast
+
 
 ---
 
@@ -284,7 +284,7 @@ This project is licensed under the MIT License — see [LICENSE](LICENSE) for de
 
 <div align="center">
 
-**Built with ❤️ for the portfolio**
+
 
 [⬆ Back to top](#smartcut-studio)
 
